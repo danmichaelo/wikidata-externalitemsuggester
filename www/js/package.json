@@ -1,17 +1,19 @@
 {
-  "name": "externalitemsuggester/server",
+  "name": "externalitemsuggester-server",
   "version": "1.0.0",
   "description": "Server component that proxies search requests to external search services.",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon --watch server --inspect ./server.js"
+    "dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon --watch server --inspect ./server.js",
+    "start": "node server.js > server.log 2>&1"
   },
   "author": "Dan Michael O. Heggø <danmichaelo@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
     "cors": "^2.8.5",
-    "express": "^4.17.0"
+    "express": "^4.17.0",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "cross-env": "^5.2.0"

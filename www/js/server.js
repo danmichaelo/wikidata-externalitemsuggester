@@ -1,9 +1,10 @@
 'use strict'
 
+const path = require('path')
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(cors({
   origin: 'https://www.wikidata.org',
@@ -16,7 +17,13 @@ const providers = {
 	P214: require('./providers/P214'),
 }
 
-app.get('/search', async (req, res, next) => {
+const router = express.Router();
+
+router.get('/', (req, res, next) => {
+    res.sendFile(path.resolve('index.html'));
+})
+
+router.get('/search', async (req, res, next) => {
 	let property = req.query.property,
 		term = req.query.value,
 		processor = providers[property]
@@ -34,6 +41,13 @@ app.get('/search', async (req, res, next) => {
 		// TOOD: this will eventually be handled by your error handling middleware
 		next(e)
 	}
+})
+
+// Mount router to a base URL
+app.use('/externalitemsuggester', router)
+
+app.use((req, res, next) => {
+  res.status(404).send("Sorry, can't find that!")
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
