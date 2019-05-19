@@ -368,21 +368,13 @@
 	(function() {
 
 		// Question: Is all of this really necessary??
-		var rendered = $.Deferred(),
-			loaded = $.Deferred();
+		var rendered = $.Deferred();
 
 		$.when(
 			rendered,
-			loaded,
 			$.ready
 		).then( function () {
 			initGadget();
-		} );
-
-		mw.hook( 'wikibase.entityPage.entityLoaded' ).add( function ( entity ) {
-			getProperties( entity ).then( function () {
-				loaded.resolve();
-			} );
 		} );
 
 		mw.hook( 'wikibase.entityPage.entityView.rendered' ).add( function () {
