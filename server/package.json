@@ -1,0 +1,19 @@
+{
+  "name": "authoritysuggester-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon --watch server --inspect ./server.js"
+  },
+  "author": "Dan Michael O. Heggø <danmichaelo@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  }
+}
