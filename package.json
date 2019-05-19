@@ -1,0 +1,17 @@
+{
+  "name": "authoritysuggester",
+  "version": "1.0.0",
+  "description": "Widget that adds entityselector-like autocomplete for external entities just like local entities.",
+  "main": "AuthoritySuggester.js",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-wikimedia": "^0.12.0",
+    "eslint-plugin-json": "^1.4.0",
+    "eslint-plugin-no-jquery": "^2.0.0"
+  },
+  "scripts": {
+    "lint": "npx eslint ."
+  },
+  "author": "Dan Michael O. Heggø <danmichaelo@gmail.com>",
+  "license": "MIT"
+}
