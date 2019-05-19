@@ -1,8 +1,8 @@
 /**
- * AuthoritySuggester.js
+ * Gadget-externalitemsuggester.js
  *
- * Widget that provides autocompletion for supported authority control properties
- * using external endpoints.
+ * Gadget that provides autocompletion for supported external-id properties on Wikidata
+ * using external search services.
  *
  * Draws on code from jquery.wikibase.entitysuggester.js and jquery.wikibase.commonssuggester.js
  *
@@ -13,7 +13,7 @@
 	'use strict';
 
 	var config = {
-			url: 'https://tools.wmflabs.org/bsaut/authority.php?property=%PROPERTY%&value=%QUERY%',
+			url: 'https://tools.wmflabs.org/externalitemsuggester/search?property=%PROPERTY%&value=%QUERY%',
 			supportedProperties: [
 				'P214', // VIAF
 				'P1015', // Bibsys
@@ -25,14 +25,14 @@
 		repoApi = new wb.api.RepoApi( api );
 
 	/**
-	 * The authority record suggester widget.
+	 * The external item suggester widget.
 	 *
-	 * @class jQuery.ui.authoritysuggester
+	 * @class jQuery.ui.externalitemsuggester
 	 * @extends jQuery.ui.suggester
 	 *
 	 * @constructor
 	 */
-	$.widget( 'ui.authoritysuggester', $.ui.suggester, {
+	$.widget( 'ui.externalitemsuggester', $.ui.suggester, {
 
 		/**
 		 * Caches retrieved results.
@@ -49,7 +49,7 @@
 
 			this._cache = {};
 
-			console.log( '[authoritysuggester] Create suggester', this.options );
+			console.log( '[externalitemsuggester] Create suggester', this.options );
 
 			if ( !this.options.source ) {
 				this.options.source = this._initDefaultSource();
@@ -76,8 +76,7 @@
 		},
 
 		/**
-		 * Initializes the default source pointing to the authority search service
-		 * for the given property.
+		 * Initializes the default source pointing to the external item search service.
 		 *
 		 * @protected
 		 * @return {Function}
@@ -149,7 +148,7 @@
 		},
 
 		/**
-		 * Generates the label for a suggester entity.
+		 * Generate the menu element for a suggester entity.
 		 *
 		 * @param {Object} result
 		 * @protected
@@ -176,7 +175,7 @@
 		},
 
 		/**
-		 * Generate the URL to the authority record using the formatter URL (P1630) template.
+		 * Generate URL to the external item using the formatter URL (P1630) template.
 		 *
 		 * @param {string} identifier
 		 * @protected
@@ -212,7 +211,7 @@
 
 			$( this.options.menu )
 				.on( 'selected.suggester', function ( event, item ) {
-					console.log( '[authoritysuggester] Select item:', item.getValue() );
+					console.log( '[externalitemsuggester] Select item:', item.getValue() );
 
 					// The superclass (jquery.ui.suggester) already updates the textfield,
 					// but does not update the view model, so we need to somehow notify the
@@ -299,14 +298,14 @@
 	// --------------------------------------------------------------------------------------------
 
 	/**
-	 * Add the authoritysuggester widget to a text input field.
+	 * Add the externalitemsuggester widget to a text input field.
 	 *
 	 * @param {jQuery} $input jQuery selector for the text input field
 	 * @param {string} property The property ID
 	 */
 	function createSuggester( $input, property ) {
 		FormatterUrlService.get( property ).then( function ( url ) {
-			$input.authoritysuggester( {
+			$input.externalitemsuggester( {
 				property: property,
 				urlFormat: url,
 				messages: {
@@ -321,7 +320,7 @@
 	}
 
 	/**
-	 * Initialize the gadget and add the necessary event listeners.
+	 * Initialize the gadget.
 	 */
 	function initGadget() {
 		var properties = {};

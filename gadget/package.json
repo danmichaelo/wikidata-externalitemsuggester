@@ -1,8 +1,8 @@
 {
-  "name": "authoritysuggester",
+  "name": "externalitemsuggester/gadget",
   "version": "1.0.0",
-  "description": "Widget that adds entityselector-like autocomplete for external entities just like local entities.",
-  "main": "AuthoritySuggester.js",
+  "description": "Wikidata gadget that adds entityselector-like autocomplete for external items.",
+  "main": "Gadget-externalitemsuggester.js",
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-wikimedia": "^0.12.0",

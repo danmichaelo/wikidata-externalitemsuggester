@@ -1,7 +1,12 @@
-# Wikidata autocomplete gadget for external entities
+# Wikidata autocomplete gadget for external-id properties
 
-Widget that adds entityselector-like autocomplete for external entities just like local entities,
-using external search services.
-Requests to external search services are proxied through a tool labs service to avoid CORS issues.
+![VIAF autocomplete](./meta/viaf-autocomplete.png)
 
-See: https://phabricator.wikimedia.org/T223776
+* The `gadget` folder contains a Wikidata gadget that provides entityselector-like
+  autocomplete for external-id properties like [VIAF](https://www.wikidata.org/wiki/Property:P214).
+
+* The `server` folder contains a small backend service for Toolforge, that queries
+  the actual external search endpoints. A proxy was needed to avoid CORS and privacy issues.
+
+Phabricator: https://phabricator.wikimedia.org/T223776
+

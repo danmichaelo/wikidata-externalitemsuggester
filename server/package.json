@@ -1,7 +1,7 @@
 {
-  "name": "authoritysuggester-server",
+  "name": "externalitemsuggester/server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server component that proxies search requests to external search services.",
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon --watch server --inspect ./server.js"
