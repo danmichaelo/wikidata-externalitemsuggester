@@ -235,7 +235,7 @@
 			//     },
 			//     'ui-entityselector-more'
 			// ) );
-			
+
 			// Add "Not found" menu item
 			customItems.unshift( new $.ui.ooMenu.CustomItem(
 				self.options.messages.notfound,
@@ -299,17 +299,12 @@
 	// --------------------------------------------------------------------------------------------
 
 	/**
-	 * Add the authoritySuggester widget to a text input field.
+	 * Add the authoritysuggester widget to a text input field.
 	 *
-	 * @param {jQuery} $input jQuery selector for the input field
+	 * @param {jQuery} $input jQuery selector for the text input field
 	 * @param {string} property The property ID
 	 */
-	function addAuthoritySuggesterToInputField( $input, property ) {
-
-		if ( !~config.supportedProperties.indexOf( property ) ) {
-			return;
-		}
-
+	function createSuggester( $input, property ) {
 		FormatterUrlService.get( property ).then( function ( url ) {
 			$input.authoritysuggester( {
 				property: property,
@@ -326,59 +321,74 @@
 	}
 
 	/**
-	 * Setup DOM observers so that we can be notified when the editing of a property starts
-	 * and we need to initialize an autocomplete widget.
-	 *
-	 * Question: Is there a better way
+	 * Initialize the gadget and add the necessary event listeners.
 	 */
-	function setupDomObservers() {
-		var observer, i, properties = [];
+	function initGadget() {
+		var properties = {};
 
-		observer = new MutationObserver( function ( mutations ) {
-			mutations.forEach( function ( mutation ) {
-				if ( mutation.type === 'childList' ) {
-					mutation.addedNodes.forEach( function ( node ) {
-						var $stmt,
-							$node = $( node );
+		/**
+		 * When a property has been selected from the dropdown menu for new statements,
+		 * we take note of which property was selected.
+		 *
+		 * @param {jQuery} event The event
+		 */
+		$( '.wikibase-statementgrouplistview', this ).on( 'entityselectorselected',
+			function onEntitySelectorSelected( event, propertyId ) {
+				var $statement = $( event.target ).closest( '.wikibase-statementgroupview' );
+				properties[ $statement ] = propertyId;
+			}
+		);
 
-						if ( $node.hasClass( 'ui-entityselector-input' ) ) {
-							$node.on( 'entityselectorselected', function ( evt, entityId ) {
-								$stmt = $node.closest( '.wikibase-statementgroupview' );
-								properties[ $stmt ] = entityId;
-							} );
-						}
+		$( '.wikibase-statementgrouplistview', this ).on( 'valueviewafterstartediting',
+			/**
+			 * When a new or existing statement of type StringValue is being edited, attach the
+			 * autocomplete widget. New statements will not have an 'id' attribute, so we need to
+			 * use the value we gathered from the `entityselectorselected` event above.
+			 *
+			 * @param {jQuery} event The event
+			 */
+			function onValueViewAfterStartEditing( event ) {
+				var $statement = $( event.target ).closest( '.wikibase-statementgroupview' ),
+					$input = $statement.find( '.valueview-expert-StringValue-input' ),
+					property = properties[ $statement ] || $statement.attr( 'id' );
 
-						if ( $node.hasClass( 'valueview-expert-StringValue-input' ) ) {
-							$stmt = $node.closest( '.wikibase-statementgroupview' );
-
-							if ( $stmt.attr( 'id' ) ) {
-								// Editing an existing statement
-								addAuthoritySuggesterToInputField( $node, $stmt.attr( 'id' ) );
-							} else if ( properties[ $stmt ] ) {
-								// Creating a new statement
-								addAuthoritySuggesterToInputField( $node, properties[ $stmt ] );
-							}
-						}
-					} );
+				if ( !$input.length ) {
+					return; // Not a StringValue statement
 				}
+
+				if ( !~config.supportedProperties.indexOf( property ) ) {
+					return; // Not a supported property
+				}
+
+				// Add the autocomplete widget
+				createSuggester( $input, property );
+			}
+		);
+	}
+
+	(function() {
+
+		// Question: Is all of this really necessary??
+		var rendered = $.Deferred(),
+			loaded = $.Deferred();
+
+		$.when(
+			rendered,
+			loaded,
+			$.ready
+		).then( function () {
+			initGadget();
+		} );
+
+		mw.hook( 'wikibase.entityPage.entityLoaded' ).add( function ( entity ) {
+			getProperties( entity ).then( function () {
+				loaded.resolve();
 			} );
 		} );
 
-		// Find elements with class .wikibase-statementgrouplistview
-		for ( i = document.getElementsByClassName( 'wikibase-statementgrouplistview' ).length - 1; i >= 0; i-- ) {
-			observer.observe(
-				document.getElementsByClassName( 'wikibase-statementgrouplistview' )[ i ],
-				{
-					attributes: false,
-					childList: true, // Observe additions and removals of direct child elements
-					characterData: false,
-					subtree: true // Also observe changes to target's descendants
-				}
-			);
-		}
-	}
-
-	// Question: Do we need to wait for document.ready here, or is not needed?
-	$( setupDomObservers.bind( this ) );
+		mw.hook( 'wikibase.entityPage.entityView.rendered' ).add( function () {
+			rendered.resolve();
+		} );
+	})();
 
 }( mediaWiki, wikibase, jQuery ) );
